@@ -1,44 +1,60 @@
 class Screen {
-	constructor(canvas) {
+	constructor(canvas, images) {
 		this.canvas = canvas;
 		this.context = canvas.getContext("2d");
+		this.images = loadImages(images);
 		this.updateCanvasSize();
-		this.setText();
+		this.initializeEntitys();
+		this.adjustEntityPositions();
+	}
+
+	initializeEntitys() {
+		this.background = new Background(this.context, this.images.sky, this.images.floor);
+		this.bird = new Bird(this.context, this.images.bird);
+		this.scoreboard = new Scoreboard(this.context, this.images.scoreboard);
+		this.text = new Text(this.context);
+		this.title = new Title(this.context, this.images.title);
+		this.tubes = new Tubes(this.context, this.images.tube, this.images.reversedTube);
+	}
+
+	adjustEntityPositions() {
+		this.bird.setScreenBounds(0, this.background.floor);
+		this.tubes.setScreenBounds(0, this.background.floor);
+
+		this.bird.image.onload = () => {
+			this.tubes.setVerticalSpacing(this.bird.image.height * 2.5);
+		}
 	}
 
 	drawGameScreen(score) {
-		this.drawBackground();
-		this.tubes.draw();
-		this.bird.draw();
+		this.drawGeneralEntitys();
 		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
 	}
 
 	drawGameOverScreen(score, bestScore, time, totalTime) {
-		this.drawBackground();
-		this.tubes.draw();
-		this.bird.draw();
+		this.drawGeneralEntitys();
 		this.title.draw();
 		this.drawScoreboard(score, bestScore, time, totalTime);
 	}
 
 	drawPauseScreen(score) {
-		this.drawBackground();
-		this.tubes.draw();
-		this.bird.draw();
+		this.drawGeneralEntitys();
 		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
 		this.drawShadow();
 		this.title.draw();
 	}
 
 	drawTitleScreen() {
-		this.drawBackground();
-		this.bird.draw();
+		this.drawGeneralEntitys();
 		this.title.draw();
 	}
 
-	drawBackground() {
+	drawGeneralEntitys() {
 		clearCanvas(this.canvas, this.context);
-		this.background.draw();
+		this.background.drawSky();
+		this.tubes.draw();
+		this.background.drawFloor();
+		this.bird.draw();
 	}
 
 	drawScoreboard(score, bestScore, time, totalTime) {
@@ -50,30 +66,6 @@ class Screen {
 	drawShadow() {
 		this.context.fillStyle = "rgba(0, 0, 0, 0.5)";
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-	}
-
-	setBackground(imageFilename) {
-		this.background = new Background(this.context, getImageFrom(imageFilename));
-	}
-
-	setBird(imageFilename) {
-		this.bird = new Bird(this.context, getImageFrom(imageFilename));
-	}
-
-	setText() {
-		this.text = new Text(this.context);
-	}
-
-	setScoreboard(imageFilename) {
-		this.scoreboard = new Scoreboard(this.context, getImageFrom(imageFilename));
-	}
-
-	setTubes(imageFilename, rImageFilename) {
-		this.tubes = new Tubes(this.context, [getImageFrom(imageFilename), getImageFrom(rImageFilename)]);
-	}
-
-	setTitle(imageFilename) {
-		this.title = new Title(this.context, getImageFrom(imageFilename));
 	}
 
 	updateCanvasSize() {

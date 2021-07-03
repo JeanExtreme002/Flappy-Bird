@@ -11,3 +11,14 @@ function getImageFrom(source) {
 	image.src = source;
 	return image;
 }
+
+function loadImages(images) {
+	const names = Object.getOwnPropertyNames(images);
+	const loadedImages = {};
+
+	for (let index = 0; index < names.length; index++) {
+		const name = names[index];
+		loadedImages[name] = getImageFrom(images[name]);
+	}
+	return loadedImages;
+}

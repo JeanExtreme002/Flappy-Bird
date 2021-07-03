@@ -1,12 +1,12 @@
 const birdEventKeys = ["arrowup", "space"];
+const pauseEventKeys = ["escape", "keyp"];
 const titleScreenEventKeys = birdEventKeys;
-const pauseEventKey = "keyp";
 
 function controlGameByKeyboard(event) {
 	if (birdEventKeys.indexOf(event.code.toLowerCase()) != -1 && !game.isPaused) {
 		game.pullBirdUp();
 	}
-	else if (event.code.toLowerCase() == pauseEventKey) {
+	else if (pauseEventKeys.indexOf(event.code.toLowerCase()) != -1) {
 		game.setPause();
 	}
 }
@@ -27,6 +27,11 @@ function startGameByMouse(event) {
 	if (event.type == "mousedown") {
 		game.startGame();
 	}
+}
+
+function clearEvents() {
+	document.onkeydown = null;
+	document.onmousedown = null;
 }
 
 function setGameEvents() {

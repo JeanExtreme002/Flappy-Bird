@@ -2,7 +2,7 @@ class Tube {
 	constructor(canvasContext, image) {
 		this.context = canvasContext;
 		this.image = image;
-		this.passedOver = false;
+		this.computed = false;
 		this.reset();
 	}
 
@@ -19,7 +19,12 @@ class Tube {
 	}
 
 	hasPassedOver(x) {
-		return (this.x + (this.image.width)) < x && !this.passedOver;
+		const hasPassedOver = (this.x + (this.image.width)) < x && !this.computed;
+
+		if (hasPassedOver) {
+			this.computed = true;
+		}
+		return hasPassedOver;
 	}
 
 	move(pixels = 1) {

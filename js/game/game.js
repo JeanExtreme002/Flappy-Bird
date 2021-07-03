@@ -3,7 +3,7 @@ class FlappyBird {
 		this.isRunning = false;
 		this.isGameOver = false;
 		this.isPaused = false;
-		this.resetMatchInfo();
+		this.resetGameData();
 	}
 
 	build(canvasElement) {
@@ -19,7 +19,7 @@ class FlappyBird {
 		else if(this.isRunning && this.isPaused) {
 			this.screen.drawPauseScreen(this.score);
 		}
-		else if (this.isRunning) {
+		else if (this.isRunning && !this.isGameOver) {
 			this.screen.drawGameScreen(this.score);
 		}
 		else {
@@ -27,36 +27,29 @@ class FlappyBird {
 		}
 	}
 
-	increaseDifficulty() {
-		this.velocity += 0.02;
-		this.screen.tubes.spacingX -= 2;
-	}
-
 	initializeGameSounds() {
 		this.audio = new AudioPlayer({
-			"music": musicFilename,
-			"impactOnGround": impactOnGroundSoundFilename,
-			"impactOnTube": impactOnTubeSoundFilename,
-			"newRecord": newRecordSoundFilename
+			music: musicFilename,
+			impactOnGround: impactOnGroundSoundFilename,
+			impactOnTube: impactOnTubeSoundFilename,
+			newRecord: newRecordSoundFilename
 		});
 	}
 
 	initializeGameScreen(canvas) {
-		this.screen = new Screen(canvas);
-		this.screen.setBackground(backgroundImageFilename);
-		this.screen.setBird(birdImageFilename);
-		this.screen.setTubes(tubeImageFilename, rtubeImageFilename);
-		this.screen.setScoreboard(scoreboardImageFilename);
-		this.screen.setTitle(titleImageFilename);
+		this.screen = new Screen(canvas, {
+			bird: birdImageFilename,
+			floor: floorImageFilename,
+			sky: skyImageFilename,
+			scoreboard: scoreboardImageFilename,
+			title: titleImageFilename,
+			tube: tubeImageFilename,
+			reversedTube: reversedTubeImageFilename,
+		});
 	}
 
 	pullBirdUp() {
-		this.screen.bird.move(true)
-	}
-
-	resetDifficulty() {
-		this.screen.tubes.spacingX = 500;
-		this.velocity = 2;
+		this.screen.bird.move(true);
 	}
 
 	resetEntitys() {
@@ -65,11 +58,16 @@ class FlappyBird {
 		this.screen.tubes.reset();
 	}
 
-	resetMatchInfo() {
+	resetGameData() {
 		this.score = 0;
 		this.time = 0;
 		this.newRecord = false;
 		this.startingTime = new Date();
+	}
+
+	setDifficultyByScore(score) {
+		this.screen.tubes.setHorizontalSpacing(500 - 2 * score, 0);
+		this.velocity = 2 + 0.02 * score;
 	}
 
 	setGameOver() {
@@ -80,10 +78,11 @@ class FlappyBird {
 	}
 
 	startGame() {
-		this.resetDifficulty();
 		this.resetEntitys();
-		this.resetMatchInfo();
+		this.resetGameData();
+		this.setDifficultyByScore(0);
 		this.isRunning = true;
+		this.isGameOver = false;
 		this.audio.play("music", true, true);
 	}
 
@@ -99,12 +98,12 @@ class FlappyBird {
 	}
 
 	update() {
-		if (this.isRunning && !this.isPaused) {
+		if (this.isRunning && !this.isPaused && !this.isGameOver) {
 			this.updateEntitys();
 
 			const birdBbox = this.screen.bird.getBbox();
 
-			if (this.screen.bird.hasCollidedWithCanvas()) {
+			if (this.screen.bird.hasCollidedWithScreenBounds()) {
 				this.audio.play("impactOnGround", true, false);
 				this.setGameOver();
 			}
@@ -115,8 +114,8 @@ class FlappyBird {
 			}
 
 			if (this.screen.tubes.hasPassedOver(birdBbox[0])) {
-				this.increaseDifficulty();
 				this.updateBestScore(++this.score);
+				this.setDifficultyByScore(this.score);
 			}
 		}
 		this.drawGameScreen();

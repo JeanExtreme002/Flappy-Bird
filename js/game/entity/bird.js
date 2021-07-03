@@ -3,16 +3,17 @@ class Bird {
 		this.context = canvasContext;
 		this.canvas = canvasContext.canvas;
 		this.image = image;
-		this.reset();
 		this.setAcceleration(0.15, 3);
+		this.setScreenBounds(0, canvas.height);
+		this.reset();
 	}
 
 	draw() {
 		this.context.drawImage(this.image, this.getPositionX(), this.y);
 	}
 
-	hasCollidedWithCanvas() {
-		return this.y == 0 || this.y >= (this.canvas.height - this.image.height);
+	hasCollidedWithScreenBounds() {
+		return this.y == this.screenCeil || (this.y + this.image.height) >= this.screenFloor;
 	}
 
 	getBbox() {
@@ -35,23 +36,28 @@ class Bird {
 		this.velocityY += this.gravity + (flyUp ? this.accelerationUp : 0);
 		this.y += this.velocityY;
 
-		if (this.y <= 0) {
+		if (this.y <= this.screenCeil) {
+			this.y = this.screenCeil;
 			this.velocityY = 0;
-			this.y = 0;
 		}
 
-		if (this.y >= (this.canvas.height - this.image.height)) {
-			this.y = (this.canvas.height - this.image.height);
+		if ((this.y + this.image.height) >= this.screenFloor) {
+			this.y = this.screenFloor - this.image.height;
 		}
 	}
 
 	reset() {
-		this.velocityY = 0;
 		this.y = this.canvas.height / 2;
+		this.velocityY = 0;
 	}
 
 	setAcceleration(gravity, accelerationUp) {
 		this.gravity = Math.abs(gravity);
 		this.accelerationUp = Math.abs(accelerationUp) * -1;
+	}
+
+	setScreenBounds(ceil, floor) {
+		this.screenCeil = ceil;
+		this.screenFloor = floor;
 	}
 }

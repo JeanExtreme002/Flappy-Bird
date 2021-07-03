@@ -1,19 +1,20 @@
 class Tubes {
-	constructor(canvasContext, images) {
+	constructor(canvasContext, tubeImage, reversedTubeImage) {
 		this.context = canvasContext;
 		this.canvas = canvasContext.canvas;
-		this.images = images;
-		this.spacingX = 200;
-		this.spacingY = 100;
+		this.setImages(tubeImage, reversedTubeImage);
+		this.setScreenBounds(0, canvas.height);
+		this.setSpacing(200, 100);
 		this.reset();
 	}
 
-	create() {
-		const tubeDown = new Tube(this.context, this.images[0]);
-		tubeDown.setRandomPositionY(this.spacingY + 50, this.canvas.height - 50);
+	createNewTubes() {
+		const tubeDown = new Tube(this.context, this.tubeImage);
+		tubeDown.setRandomPositionY(this.screenCeil + this.spacingY + 30, this.screenFloor - 30);
 
-		const tubeUp = new Tube(this.context, this.images[1]);
-		tubeUp.y = tubeDown.y - this.images[0].height - this.spacingY;
+		const tubeUp = new Tube(this.context, this.reversedTubeImage);
+		tubeUp.y = tubeDown.y - this.reversedTubeImage.height - this.spacingY;
+
 		this.tubes.push(tubeDown);
 		this.tubes.push(tubeUp);
 	}
@@ -23,42 +24,56 @@ class Tubes {
 	}
 
 	hasCollided(bbox) {
-		const tubes = this.tubes.filter((tube) => tube.hasCollided(bbox));
-		return tubes.length != 0 ? true : false;
+		return this.tubes.filter((tube) => tube.hasCollided(bbox)).length != 0;
+	}
+
+	hasTubes() {
+		return this.tubes.length != 0;
 	}
 
 	hasPassedOver(x) {
-		const tubes = this.tubes.filter((tube) => {
-			const hasPassedOver = tube.hasPassedOver(x);
-
-			if (hasPassedOver) {
-				tube.passedOver = true;
-			}
-			return hasPassedOver;
-		});
-		return tubes.length != 0 ? true : false;
-	}
-
-	isVisible(tube) {
-		return (tube.x + tube.image.width) > 0;
+		return this.tubes.filter((tube) => tube.hasPassedOver(x)).length != 0;
 	}
 
 	move(pixels = 1) {
 		this.tubes.forEach((tube) => tube.move(pixels));
+		this.removeInvisibleTubes();
 
 		const lastTube = this.tubes[this.tubes.length - 1];
 
-		if (this.tubes.length == 0 || (lastTube.x + this.images[0].width) <= (this.canvas.width - this.spacingX)) {
-			this.create();
+		if (!this.hasTubes() || (lastTube.x + lastTube.image.width) <= (this.canvas.width - this.spacingX)) {
+			this.createNewTubes();
 		}
-		this.removeInvisibleTubes();
 	}
 
 	removeInvisibleTubes() {
-		this.tubes = this.tubes.filter(this.isVisible);
+		this.tubes = this.tubes.filter((tube) => (tube.x + tube.image.width) > 0);
 	}
 
 	reset() {
 		this.tubes = [];
+	}
+
+	setImages(tubeImage, reversedTubeImage) {
+		this.tubeImage = tubeImage;
+		this.reversedTubeImage = reversedTubeImage;
+	}
+
+	setScreenBounds(ceil, floor) {
+		this.screenCeil = ceil;
+		this.screenFloor = floor;
+	}
+
+	setSpacing(spacingX, spacingY) {
+		this.setHorizontalSpacing(spacingX);
+		this.setVerticalSpacing(spacingY);
+	}
+
+	setHorizontalSpacing(spacingX) {
+		this.spacingX = spacingX;
+	}
+
+	setVerticalSpacing(spacingY) {
+		this.spacingY = spacingY;
 	}
 }

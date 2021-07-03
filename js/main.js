@@ -9,7 +9,8 @@ function main() {
 
 function updateGame() {
 	if (running && !game.isRunning) {
-		setTitleScreenEvents();
+		clearEvents();
+		setTimeout(setTitleScreenEvents, 500);
 		running = false;
 	}
 	else if(!running && game.isRunning) {
