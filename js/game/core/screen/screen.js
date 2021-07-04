@@ -4,11 +4,11 @@ class Screen {
 		this.context = canvas.getContext("2d");
 		this.images = loadImages(images);
 		this.updateCanvasSize();
-		this.initializeEntitys();
+		this.initializeEntities();
 		this.adjustEntityPositions();
 	}
 
-	initializeEntitys() {
+	initializeEntities() {
 		this.background = new Background(this.context, this.images.sky, this.images.floor);
 		this.bird = new Bird(this.context, this.images.bird);
 		this.scoreboard = new Scoreboard(this.context, this.images.scoreboard);
@@ -27,29 +27,29 @@ class Screen {
 	}
 
 	drawGameScreen(score) {
-		this.drawGeneralEntitys();
+		this.drawGeneralEntities();
 		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
 	}
 
 	drawGameOverScreen(score, bestScore, time, totalTime) {
-		this.drawGeneralEntitys();
+		this.drawGeneralEntities();
 		this.title.draw();
 		this.drawScoreboard(score, bestScore, time, totalTime);
 	}
 
 	drawPauseScreen(score) {
-		this.drawGeneralEntitys();
+		this.drawGeneralEntities();
 		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
 		this.drawShadow();
 		this.title.draw();
 	}
 
 	drawTitleScreen() {
-		this.drawGeneralEntitys();
+		this.drawGeneralEntities();
 		this.title.draw();
 	}
 
-	drawGeneralEntitys() {
+	drawGeneralEntities() {
 		clearCanvas(this.canvas, this.context);
 		this.background.drawSky();
 		this.tubes.draw();

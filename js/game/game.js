@@ -52,7 +52,7 @@ class FlappyBird {
 		this.screen.bird.move(true);
 	}
 
-	resetEntitys() {
+	resetEntities() {
 		this.screen.background.reset();
 		this.screen.bird.reset();
 		this.screen.tubes.reset();
@@ -66,8 +66,11 @@ class FlappyBird {
 	}
 
 	setDifficultyByScore(score) {
-		this.screen.tubes.setHorizontalSpacing(500 - 2 * score, 0);
-		this.velocity = 2 + 0.02 * score;
+		const spacing = 400 - 2 * score;
+		const velocity = 2 + 0.005 * score;
+
+		this.screen.tubes.setHorizontalSpacing(spacing >= 250 ? spacing : 250);
+		this.velocity = velocity <= 3 ? velocity : 3;
 	}
 
 	setGameOver() {
@@ -78,7 +81,7 @@ class FlappyBird {
 	}
 
 	startGame() {
-		this.resetEntitys();
+		this.resetEntities();
 		this.resetGameData();
 		this.setDifficultyByScore(0);
 		this.isRunning = true;
@@ -99,7 +102,7 @@ class FlappyBird {
 
 	update() {
 		if (this.isRunning && !this.isPaused && !this.isGameOver) {
-			this.updateEntitys();
+			this.updateEntities();
 
 			const birdBbox = this.screen.bird.getBbox();
 
@@ -121,7 +124,7 @@ class FlappyBird {
 		this.drawGameScreen();
 	}
 
-	updateEntitys() {
+	updateEntities() {
 		this.screen.bird.move();
 		this.screen.background.move(this.velocity);
 		this.screen.tubes.move(this.velocity);
