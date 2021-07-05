@@ -4,20 +4,14 @@ class Text {
 		this.canvas = canvasContext.canvas;
 	}
 
-	draw(text, x, y, color, size, style) {
-		// Draws a border.
-		this.setTextStyle("#000", size, style);
-		this.context.fillText(text, x - 2, y);
-		this.context.fillText(text, x + 2, y);
-		this.context.fillText(text, x, y - 2);
-		this.context.fillText(text, x, y + 2);
-
-		this.setTextStyle(color, size, style);
-		this.context.fillText(text, x, y);
-	}
-
-	setTextStyle(color, size, font) {
+	draw(text, x, y, color, size, style, align = "start", border = 2, borderColor = "black") {
 		this.context.fillStyle = color;
-		this.context.font = size + "px " + font;
+		this.context.font = size + "px " + style;
+		this.context.textAlign = align;
+		this.context.lineWidth = border;
+		this.context.strokeStyle = borderColor;
+
+		this.context.fillText(text, x, y);
+		this.context.strokeText(text, x, y);
 	}
 }

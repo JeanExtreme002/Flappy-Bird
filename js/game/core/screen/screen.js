@@ -42,6 +42,7 @@ class Screen {
 		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
 		this.drawShadow();
 		this.title.draw();
+		this.text.draw("PAUSED", this.canvas.width / 2, this.canvas.height / 2, "#fff", 100, "autumn", "center");
 	}
 
 	drawTitleScreen() {
