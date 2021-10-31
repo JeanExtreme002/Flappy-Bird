@@ -1,76 +1,76 @@
 class Screen {
-	constructor(canvas, images) {
-		this.canvas = canvas;
-		this.context = canvas.getContext("2d");
-		this.images = loadImages(images);
-		this.updateCanvasSize();
-		this.initializeEntities();
-		this.adjustEntityPositions();
-	}
+    constructor(canvas, images) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
+        this.images = loadImages(images);
+        this.updateCanvasSize();
+        this.initializeEntities();
+        this.adjustEntityPositions();
+    }
 
-	initializeEntities() {
-		this.background = new Background(this.context, this.images.sky, this.images.floor);
-		this.bird = new Bird(this.context, this.images.bird);
-		this.scoreboard = new Scoreboard(this.context, this.images.scoreboard);
-		this.text = new Text(this.context);
-		this.title = new Title(this.context, this.images.title);
-		this.tubes = new Tubes(this.context, this.images.tube, this.images.reversedTube);
-	}
+    initializeEntities() {
+        this.background = new Background(this.context, this.images.sky, this.images.floor);
+        this.bird = new Bird(this.context, this.images.bird);
+        this.scoreboard = new Scoreboard(this.context, this.images.scoreboard);
+        this.text = new Text(this.context);
+        this.title = new Title(this.context, this.images.title);
+        this.tubes = new Tubes(this.context, this.images.tube, this.images.reversedTube);
+    }
 
-	adjustEntityPositions() {
-		this.bird.setScreenBounds(0, this.background.floor);
-		this.tubes.setScreenBounds(0, this.background.floor);
+    adjustEntityPositions() {
+        this.bird.setScreenBounds(0, this.background.floor);
+        this.tubes.setScreenBounds(0, this.background.floor);
 
-		this.bird.image.onload = () => {
-			this.tubes.setVerticalSpacing(this.bird.image.height * 2.5);
-		}
-	}
+        this.bird.image.onload = () => {
+            this.tubes.setVerticalSpacing(this.bird.image.height * 2.5);
+        }
+    }
 
-	drawGameScreen(score) {
-		this.drawGeneralEntities();
-		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
-	}
+    drawGameScreen(score) {
+        this.drawGeneralEntities();
+        this.text.draw(score, 20, 60, "#fff", 50, "autumn");
+    }
 
-	drawGameOverScreen(score, bestScore, time, totalTime) {
-		this.drawGeneralEntities();
-		this.title.draw();
-		this.drawScoreboard(score, bestScore, time, totalTime);
-	}
+    drawGameOverScreen(score, bestScore, time, totalTime) {
+        this.drawGeneralEntities();
+        this.title.draw();
+        this.drawScoreboard(score, bestScore, time, totalTime);
+    }
 
-	drawPauseScreen(score) {
-		this.drawGeneralEntities();
-		this.text.draw(score, 20, 60, "#fff", 50, "autumn");
-		this.drawShadow();
-		this.title.draw();
-		this.text.draw("PAUSED", this.canvas.width / 2, this.canvas.height / 2, "#fff", 100, "autumn", "center");
-	}
+    drawPauseScreen(score) {
+        this.drawGeneralEntities();
+        this.text.draw(score, 20, 60, "#fff", 50, "autumn");
+        this.drawShadow();
+        this.title.draw();
+        this.text.draw("PAUSED", this.canvas.width / 2, this.canvas.height / 2, "#fff", 100, "autumn", "center");
+    }
 
-	drawTitleScreen() {
-		this.drawGeneralEntities();
-		this.title.draw();
-	}
+    drawTitleScreen() {
+        this.drawGeneralEntities();
+        this.title.draw();
+    }
 
-	drawGeneralEntities() {
-		clearCanvas(this.canvas, this.context);
-		this.background.drawSky();
-		this.tubes.draw();
-		this.background.drawFloor();
-		this.bird.draw();
-	}
+    drawGeneralEntities() {
+        clearCanvas(this.canvas, this.context);
+        this.background.drawSky();
+        this.tubes.draw();
+        this.background.drawFloor();
+        this.bird.draw();
+    }
 
-	drawScoreboard(score, bestScore, time, totalTime) {
-		time = getFormattedTime(time);
-		totalTime = getFormattedTime(totalTime);
-		this.scoreboard.draw(score, bestScore, time, totalTime);
-	}
+    drawScoreboard(score, bestScore, time, totalTime) {
+        time = getFormattedTime(time);
+        totalTime = getFormattedTime(totalTime);
+        this.scoreboard.draw(score, bestScore, time, totalTime);
+    }
 
-	drawShadow() {
-		this.context.fillStyle = "rgba(0, 0, 0, 0.5)";
-		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-	}
+    drawShadow() {
+        this.context.fillStyle = "rgba(0, 0, 0, 0.5)";
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 
-	updateCanvasSize() {
-		canvas.width = canvas.offsetWidth;
-		canvas.height = canvas.offsetHeight;
-	}
+    updateCanvasSize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
 }
